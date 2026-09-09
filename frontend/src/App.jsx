@@ -1,122 +1,163 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import "./App.css";
 
-function App() {
-  const [count, setCount] = useState(0)
-
+function Home() {
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+    <main className="home">
+      <section className="hero">
+
+        {/* Background Image */}
+        <div className="hero-background"></div>
+
+        {/* Dark overlay */}
+        <div className="hero-overlay"></div>
+
+        {/* Navigation */}
+        <nav className="navbar">
+          <a href="/" className="logo">
+            chronicle
+          </a>
+
+          <div className="nav-links">
+            <a href="/">Explore</a>
+            <a href="/search">Search</a>
+            <a href="#">About</a>
+          </div>
+        </nav>
+
+        {/* Hero Content */}
+        <div className="hero-content">
+
+          <p className="eyebrow">
+            ANCIENT WORLD
+          </p>
+
+          <h1>
+            The Rise
+            <br />
+            of Rome
+          </h1>
+
+          <p className="hero-period">
+            753 BC — 476 AD
+          </p>
+
+          <p className="hero-description">
+            Explore the people, wars, and events that shaped
+            one of history's greatest civilizations.
+          </p>
+
+          <a href="/search" className="hero-button">
+            Explore History
+          </a>
+
         </div>
-        <div>
-          <h1>Get started</h1>
+
+        {/* Search */}
+        <div className="hero-search">
+          <span className="search-icon">⌕</span>
+
+          <input
+            type="text"
+            placeholder="Search history..."
+          />
+
+          <span className="search-hint">
+            ENTER
+          </span>
+        </div>
+
+        {/* Slide Indicator */}
+        <div className="slide-indicator">
+          <span className="current-slide">01</span>
+          <span className="slide-line"></span>
+          <span>06</span>
+        </div>
+
+        {/* Scroll Indicator */}
+        <div className="scroll-indicator">
+          <span>SCROLL TO EXPLORE</span>
+          <span className="scroll-line"></span>
+        </div>
+
+      </section>
+
+      {/* Explore Section */}
+      <section className="explore-section">
+
+        <div className="section-heading">
+          <p className="eyebrow">DISCOVER</p>
+
+          <h2>
+            Explore History
+          </h2>
+
           <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
+            From ancient civilizations to the modern world,
+            discover the people and events that shaped our past.
           </p>
         </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
+
+        <div className="category-grid">
+
+          <a href="/search?category=people" className="category-card">
+            <span>01</span>
+            <h3>People & Leaders</h3>
+            <p>Rulers, generals, thinkers, and influential figures.</p>
+          </a>
+
+          <a href="/search?category=empires" className="category-card">
+            <span>02</span>
+            <h3>Empires & Civilizations</h3>
+            <p>The rise and fall of civilizations across history.</p>
+          </a>
+
+          <a href="/search?category=wars" className="category-card">
+            <span>03</span>
+            <h3>Wars & Battles</h3>
+            <p>The conflicts that changed the course of history.</p>
+          </a>
+
+          <a href="/search?category=events" className="category-card">
+            <span>04</span>
+            <h3>Historical Events</h3>
+            <p>Moments that transformed the world.</p>
+          </a>
+
+        </div>
+
       </section>
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+    </main>
+  );
 }
 
-export default App
+function Search() {
+  return (
+    <main className="placeholder-page">
+      <h1>Search</h1>
+    </main>
+  );
+}
+
+function HistoryEntry() {
+  return (
+    <main className="placeholder-page">
+      <h1>Historical Entry</h1>
+    </main>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/search" element={<Search />} />
+        <Route path="/history/:id" element={<HistoryEntry />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+export default App;
