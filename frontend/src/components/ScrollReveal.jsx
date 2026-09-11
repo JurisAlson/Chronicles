@@ -1,6 +1,9 @@
 import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 function ScrollReveal() {
+  const location = useLocation();
+
   useEffect(() => {
     const elements = document.querySelectorAll(".reveal");
 
@@ -25,7 +28,7 @@ function ScrollReveal() {
     return () => {
       observer.disconnect();
     };
-  }, []);
+  }, [location.pathname]);
 
   return null;
 }
