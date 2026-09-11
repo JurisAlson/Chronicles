@@ -5,7 +5,17 @@ function ScrollReveal() {
   const location = useLocation();
 
   useEffect(() => {
+    // Chronicle's Search page has its own scroll behavior
+    // and section observer. Do not apply global reveals there.
+    if (location.pathname === "/search") {
+      return;
+    }
+
     const elements = document.querySelectorAll(".reveal");
+
+    if (!elements.length) {
+      return;
+    }
 
     const observer = new IntersectionObserver(
       (entries) => {

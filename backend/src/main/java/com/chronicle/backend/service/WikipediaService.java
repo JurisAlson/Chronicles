@@ -1,6 +1,6 @@
 package com.chronicle.backend.service;
 
-import com.chronicle.backend.dto.WikipediaSearchResult;
+import com.chronicle.backend.dto.WikipediaSearchOption;
 import com.chronicle.backend.dto.WikipediaSection;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,15 +28,16 @@ public class WikipediaService {
                 .build();
     }
 
-    public WikipediaSearchResult searchWikipedia(String query) {
+    public List<WikipediaSearchOption> searchWikipedia(String query) {
 
-        // Step 1: Search Wikipedia
         String response = restClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/w/api.php")
                         .queryParam("action", "query")
                         .queryParam("list", "search")
                         .queryParam("srsearch", query)
+                        .queryParam("srlimit", 8)
+                        .queryParam("srprop", "snippet")
                         .queryParam("format", "json")
                         .build())
                 .retrieve()
@@ -45,28 +46,50 @@ public class WikipediaService {
         try {
             JsonNode root = objectMapper.readTree(response);
 
-            JsonNode firstResult = root
+            JsonNode searchResults = root
                     .path("query")
-                    .path("search")
-                    .get(0);
+                    .path("search");
 
-            if (firstResult == null) {
-                throw new RuntimeException(
-                        "No Wikipedia results found for: " + query
+            List<WikipediaSearchOption> results = new ArrayList<>();
+
+            for (JsonNode result : searchResults) {
+
+                String title = result
+                        .path("title")
+                        .asText();
+
+                long pageId = result
+                        .path("pageid")
+                        .asLong();
+
+                String description = result
+                        .path("snippet")
+                        .asText();
+
+                /*
+                 * Wikipedia returns search snippets with HTML
+                 * highlighting such as <span class="searchmatch">.
+                 * Remove those tags before sending the text
+                 * to the frontend.
+                 */
+                description = description
+                        .replaceAll("<[^>]*>", "")
+                        .replace("&quot;", "\"")
+                        .replace("&#39;", "'")
+                        .replace("&amp;", "&")
+                        .replace("&lt;", "<")
+                        .replace("&gt;", ">");
+
+                results.add(
+                        new WikipediaSearchOption(
+                                title,
+                                pageId,
+                                description
+                        )
                 );
             }
 
-            String title = firstResult.path("title").asText();
-            long pageId = firstResult.path("pageid").asLong();
-
-            // Step 2: Get the actual Wikipedia article
-            String extract = getWikipediaArticle(pageId);
-
-            return new WikipediaSearchResult(
-                    title,
-                    pageId,
-                    extract
-            );
+            return results;
 
         } catch (Exception e) {
             throw new RuntimeException(
@@ -122,36 +145,40 @@ public class WikipediaService {
             );
         }
     }
-    public String getWikipediaSectionContent(long pageId, int sectionIndex) {
 
-    String response = restClient.get()
-            .uri(uriBuilder -> uriBuilder
-                    .path("/w/api.php")
-                    .queryParam("action", "parse")
-                    .queryParam("pageid", pageId)
-                    .queryParam("prop", "text")
-                    .queryParam("section", sectionIndex)
-                    .queryParam("format", "json")
-                    .build())
-            .retrieve()
-            .body(String.class);
+    public String getWikipediaSectionContent(
+            long pageId,
+            int sectionIndex
+    ) {
 
-    try {
-        JsonNode root = objectMapper.readTree(response);
+        String response = restClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/w/api.php")
+                        .queryParam("action", "parse")
+                        .queryParam("pageid", pageId)
+                        .queryParam("prop", "text")
+                        .queryParam("section", sectionIndex)
+                        .queryParam("format", "json")
+                        .build())
+                .retrieve()
+                .body(String.class);
 
-        return root
-                .path("parse")
-                .path("text")
-                .path("*")
-                .asText();
+        try {
+            JsonNode root = objectMapper.readTree(response);
 
-    } catch (Exception e) {
-        throw new RuntimeException(
-                "Failed to parse Wikipedia section content",
-                e
-        );
+            return root
+                    .path("parse")
+                    .path("text")
+                    .path("*")
+                    .asText();
+
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "Failed to parse Wikipedia section content",
+                    e
+            );
+        }
     }
-}
 
     public String getWikipediaArticle(long pageId) {
 

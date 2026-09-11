@@ -1,6 +1,7 @@
 package com.chronicle.backend.controller;
 
-import com.chronicle.backend.dto.WikipediaSearchResult;
+import com.chronicle.backend.dto.WikipediaSearchOption;
+import com.chronicle.backend.dto.WikipediaSection;
 import com.chronicle.backend.service.WikipediaService;
 
 import java.util.List;
@@ -8,9 +9,6 @@ import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-// Temporary controller for testing purposes. This will be removed in the future when the frontend is implemented.
-import com.chronicle.backend.dto.WikipediaSection;
 
 @RestController
 public class HistoryController {
@@ -22,14 +20,17 @@ public class HistoryController {
     }
 
     @GetMapping("/api/history/search")
-    public WikipediaSearchResult search(@RequestParam String query) {
+    public List<WikipediaSearchOption> search(
+            @RequestParam String query
+    ) {
         return wikipediaService.searchWikipedia(query);
     }
 
-    // Temporary controller for testing purposes. This will be removed in the future when the frontend is implemented.
     @GetMapping("/api/history/sections")
-    public List<WikipediaSection> sections(@RequestParam long pageId) {
-    return wikipediaService.getWikipediaSections(pageId);
+    public List<WikipediaSection> sections(
+            @RequestParam long pageId
+    ) {
+        return wikipediaService.getWikipediaSections(pageId);
     }
 
     @GetMapping("/api/history/section")

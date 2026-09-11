@@ -6,10 +6,8 @@
 
 :root {
   font-family: "DM Sans", sans-serif;
-
   color: #f5f3ee;
   background: #080808;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -47,13 +45,10 @@ input {
 
 .eyebrow {
   margin-bottom: 18px;
-
   font-size: 11px;
   font-weight: 600;
-
   letter-spacing: 0.22em;
   text-transform: uppercase;
-
   color: rgba(245, 243, 238, 0.55);
 }
 
@@ -64,10 +59,8 @@ input {
 
 .logo {
   font-family: "Playfair Display", serif;
-
   font-size: 36px;
   font-weight: 600;
-
   letter-spacing: -1.5px;
   line-height: 1;
 }
@@ -80,18 +73,13 @@ input {
 .navbar,
 .inner-navbar {
   position: absolute;
-
   top: 0;
   left: 0;
-
   width: 100%;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   padding: 34px 55px;
-
   z-index: 100;
 }
 
@@ -102,19 +90,15 @@ input {
 .nav-links {
   display: flex;
   align-items: center;
-
   gap: 38px;
-
   font-size: 13px;
   font-weight: 500;
-
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .nav-links a {
   opacity: 0.65;
-
   transition: opacity 0.25s ease;
 }
 
@@ -129,38 +113,29 @@ input {
 
 .hero {
   position: relative;
-
   width: 100%;
   height: 100vh;
   min-height: 700px;
-
   overflow: hidden;
-
   isolation: isolate;
 }
 
 .hero-background {
   position: absolute;
   inset: 0;
-
   z-index: -3;
-
   background-image: url(
     "https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=2400&q=85"
   );
-
   background-size: cover;
   background-position: center;
-
   transform: scale(1.02);
 }
 
 .hero-overlay {
   position: absolute;
   inset: 0;
-
   z-index: -2;
-
   background:
     linear-gradient(
       90deg,
@@ -184,63 +159,45 @@ input {
 
 .hero-content {
   position: absolute;
-
   left: 8%;
   top: 50%;
-
   transform: translateY(-45%);
-
   max-width: 620px;
 }
 
 .hero h1 {
   font-family: "Playfair Display", serif;
-
   font-size: clamp(64px, 7vw, 110px);
-
   line-height: 0.92;
   font-weight: 600;
-
   letter-spacing: -4px;
 }
 
 .hero-period {
   margin-top: 25px;
-
   font-size: 14px;
-
   letter-spacing: 0.14em;
-
   opacity: 0.65;
 }
 
 .hero-description {
   max-width: 430px;
-
   margin-top: 25px;
-
   font-size: 16px;
   line-height: 1.7;
-
   color: rgba(245, 243, 238, 0.78);
 }
 
 .hero-button {
   display: inline-flex;
   align-items: center;
-
   margin-top: 32px;
-
   padding: 13px 23px;
-
   border: 1px solid rgba(255, 255, 255, 0.4);
-
   font-size: 12px;
   font-weight: 600;
-
   letter-spacing: 0.1em;
   text-transform: uppercase;
-
   transition:
     background 0.25s ease,
     color 0.25s ease;
@@ -258,19 +215,13 @@ input {
 
 .hero-search {
   position: absolute;
-
   right: 55px;
   bottom: 45px;
-
   width: min(360px, 35vw);
-
   display: flex;
   align-items: center;
-
   gap: 12px;
-
   padding: 13px 16px;
-
   border-bottom: 1px solid rgba(255, 255, 255, 0.5);
 }
 
@@ -281,17 +232,13 @@ input {
 
 .search-placeholder {
   flex: 1;
-
   font-size: 14px;
-
   color: rgba(255, 255, 255, 0.65);
 }
 
 .search-hint {
   font-size: 9px;
-
   letter-spacing: 0.12em;
-
   opacity: 0.45;
 }
 
@@ -302,19 +249,13 @@ input {
 
 .slide-indicator {
   position: absolute;
-
   right: 55px;
   top: 50%;
-
   display: flex;
   align-items: center;
-
   gap: 12px;
-
   font-size: 11px;
-
   letter-spacing: 0.1em;
-
   opacity: 0.65;
 }
 
@@ -325,7 +266,6 @@ input {
 .slide-line {
   width: 45px;
   height: 1px;
-
   background: rgba(255, 255, 255, 0.5);
 }
 
@@ -336,26 +276,19 @@ input {
 
 .scroll-indicator {
   position: absolute;
-
   left: 55px;
   bottom: 45px;
-
   display: flex;
   align-items: center;
-
   gap: 14px;
-
   font-size: 9px;
-
   letter-spacing: 0.16em;
-
   opacity: 0.5;
 }
 
 .scroll-line {
   width: 55px;
   height: 1px;
-
   background: rgba(255, 255, 255, 0.5);
 }
 
@@ -366,7 +299,6 @@ input {
 
 .explore-preview {
   padding: 130px 8% 150px;
-
   background: #080808;
 }
 
@@ -376,22 +308,16 @@ input {
 
 .section-heading h2 {
   font-family: "Playfair Display", serif;
-
   font-size: clamp(48px, 5vw, 76px);
-
   font-weight: 500;
   line-height: 1;
-
   letter-spacing: -2px;
 }
 
 .section-heading > p:last-child {
   max-width: 500px;
-
   margin-top: 24px;
-
   color: rgba(245, 243, 238, 0.55);
-
   font-size: 16px;
   line-height: 1.7;
 }
@@ -403,7 +329,6 @@ input {
 
 .explore-list {
   margin-top: 90px;
-
   border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
 
@@ -413,37 +338,24 @@ input {
 
 .explore-item {
   position: relative;
-
   min-height: 190px;
-
   display: grid;
-
   grid-template-columns: 80px 1fr 50px;
-
   align-items: center;
-
   padding: 35px 25px;
-
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-
   overflow: hidden;
-
   isolation: isolate;
 }
 
 .explore-image {
   position: absolute;
   inset: 0;
-
   z-index: -2;
-
   background-size: cover;
   background-position: center;
-
   opacity: 0;
-
   transform: scale(1.05);
-
   transition:
     opacity 0.5s ease,
     transform 0.8s ease;
@@ -451,10 +363,8 @@ input {
 
 .explore-image::after {
   content: "";
-
   position: absolute;
   inset: 0;
-
   background:
     linear-gradient(
       90deg,
@@ -498,36 +408,25 @@ input {
 
 .explore-number {
   align-self: start;
-
   padding-top: 8px;
-
   font-size: 10px;
-
   letter-spacing: 0.15em;
-
   opacity: 0.4;
 }
 
 .explore-info h3 {
   font-family: "Playfair Display", serif;
-
   font-size: clamp(32px, 4vw, 55px);
-
   font-weight: 500;
   line-height: 1;
-
   letter-spacing: -1.5px;
 }
 
 .explore-info p {
   margin-top: 14px;
-
   font-size: 13px;
-
   letter-spacing: 0.04em;
-
   color: rgba(245, 243, 238, 0.48);
-
   transition: color 0.3s ease;
 }
 
@@ -537,12 +436,9 @@ input {
 
 .explore-arrow {
   justify-self: end;
-
   font-size: 28px;
   font-weight: 300;
-
   opacity: 0.4;
-
   transition:
     transform 0.3s ease,
     opacity 0.3s ease;
@@ -560,35 +456,27 @@ input {
 
 .standard-page {
   min-height: 100vh;
-
   background: #080808;
 }
 
 .page-header {
   padding: 100px 8% 0;
-
   max-width: 900px;
 }
 
 .page-header h1 {
   font-family: "Playfair Display", serif;
-
   font-size: clamp(60px, 8vw, 110px);
-
   font-weight: 500;
   line-height: 0.95;
-
   letter-spacing: -4px;
 }
 
 .page-header > p:last-child {
   max-width: 550px;
-
   margin-top: 30px;
-
   font-size: 16px;
   line-height: 1.7;
-
   color: rgba(245, 243, 238, 0.55);
 }
 
@@ -599,48 +487,38 @@ input {
 
 .about-page {
   min-height: 100vh;
-
   background: #080808;
 }
 
 .about-content {
   max-width: 1100px;
-
   padding: 90px 8% 140px;
 }
 
 .about-content h1 {
   font-family: "Playfair Display", serif;
-
   font-size: clamp(60px, 8vw, 110px);
-
   font-weight: 500;
   line-height: 0.95;
-
   letter-spacing: -4px;
 }
 
 .about-text {
   max-width: 650px;
-
   margin-top: 70px;
   margin-left: 15%;
 }
 
 .about-text p {
   margin-bottom: 25px;
-
   font-size: 17px;
   line-height: 1.8;
-
   color: rgba(245, 243, 238, 0.65);
 }
 
 .about-text p:last-child {
   font-family: "Playfair Display", serif;
-
   font-size: 28px;
-
   color: #f5f3ee;
 }
 
@@ -651,9 +529,7 @@ input {
 
 .reveal {
   opacity: 0;
-
   transform: translateX(-35px);
-
   transition:
     opacity 0.8s ease,
     transform 0.8s ease;
@@ -661,7 +537,6 @@ input {
 
 .reveal.visible {
   opacity: 1;
-
   transform: translateX(0);
 }
 
@@ -707,15 +582,12 @@ input {
   .hero-search {
     left: 25px;
     right: 25px;
-
     bottom: 35px;
-
     width: auto;
   }
 
   .slide-indicator {
     right: 25px;
-
     top: auto;
     bottom: 115px;
   }
@@ -741,9 +613,7 @@ input {
 
   .explore-item {
     min-height: 170px;
-
     grid-template-columns: 45px 1fr 30px;
-
     padding: 30px 10px;
   }
 

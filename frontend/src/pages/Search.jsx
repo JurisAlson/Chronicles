@@ -42,16 +42,25 @@ function cleanWikipediaContent(html) {
 
 function Search() {
   const [query, setQuery] = useState("");
+
+  // Selected article
   const [result, setResult] = useState(null);
 
-  const [sections, setSections] = useState([]);
+  // Wikipedia search candidates
+  const [searchResults, setSearchResults] = useState([]);
+
   const [sectionContents, setSectionContents] = useState([]);
 
   const [loading, setLoading] = useState(false);
+  const [selectingResult, setSelectingResult] = useState(false);
   const [error, setError] = useState("");
 
   const [openSection, setOpenSection] = useState("introduction");
   const [activeSection, setActiveSection] = useState("introduction");
+
+  /* =========================================
+     SEARCH WIKIPEDIA
+  ========================================= */
 
   async function handleSearch(event) {
     event.preventDefault();
@@ -62,9 +71,11 @@ function Search() {
 
     setLoading(true);
     setError("");
+
     setResult(null);
-    setSections([]);
+    setSearchResults([]);
     setSectionContents([]);
+
     setOpenSection("introduction");
     setActiveSection("introduction");
 
@@ -81,10 +92,38 @@ function Search() {
 
       const data = await response.json();
 
-      setResult(data);
+      setSearchResults(data);
+    } catch (searchError) {
+      console.error(searchError);
+      setError("Unable to search history right now.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
+  /* =========================================
+     SELECT SEARCH RESULT
+  ========================================= */
+
+  async function selectSearchResult(searchResult) {
+    setSelectingResult(true);
+    setError("");
+
+    try {
+      /* Fetch article introduction */
+      const articleResponse = await fetch(
+        `http://localhost:8080/api/history/article?pageId=${searchResult.pageId}`
+      );
+
+      if (!articleResponse.ok) {
+        throw new Error("Failed to fetch history article");
+      }
+
+      const extract = await articleResponse.text();
+
+      /* Fetch article sections */
       const sectionsResponse = await fetch(
-        `http://localhost:8080/api/history/sections?pageId=${data.pageId}`
+        `http://localhost:8080/api/history/sections?pageId=${searchResult.pageId}`
       );
 
       if (!sectionsResponse.ok) {
@@ -121,14 +160,13 @@ function Search() {
         );
       });
 
-      setSections(usefulSections);
-
+      /* Fetch section contents */
       const contents = [];
 
       for (const section of usefulSections) {
         try {
           const sectionResponse = await fetch(
-            `http://localhost:8080/api/history/section?pageId=${data.pageId}&sectionIndex=${section.index}`
+            `http://localhost:8080/api/history/section?pageId=${searchResult.pageId}&sectionIndex=${section.index}`
           );
 
           if (!sectionResponse.ok) {
@@ -150,20 +188,39 @@ function Search() {
         }
       }
 
+      /* Everything is ready — open the article */
+      setResult({
+        title: searchResult.title,
+        pageId: searchResult.pageId,
+        extract,
+      });
+
       setSectionContents(contents);
-    } catch (searchError) {
-      console.error(searchError);
-      setError("Unable to search history right now.");
+      setSearchResults([]);
+
+      setOpenSection("introduction");
+      setActiveSection("introduction");
+    } catch (selectionError) {
+      console.error(selectionError);
+      setError("Unable to open this historical reference.");
     } finally {
-      setLoading(false);
+      setSelectingResult(false);
     }
   }
+
+  /* =========================================
+     SECTION TOGGLE
+  ========================================= */
 
   function toggleSection(sectionId) {
     setOpenSection((current) =>
       current === sectionId ? null : sectionId
     );
   }
+
+  /* =========================================
+     TIMELINE NAVIGATION
+  ========================================= */
 
   function goToSection(sectionId) {
     setOpenSection(sectionId);
@@ -181,11 +238,10 @@ function Search() {
     });
   }
 
-  /*
-   * Track which section is currently visible.
-   * This keeps the Contents navigator synchronized
-   * with the reader's position.
-   */
+  /* =========================================
+     TRACK ACTIVE SECTION
+  ========================================= */
+
   useEffect(() => {
     if (!result) {
       return;
@@ -217,7 +273,9 @@ function Search() {
           );
 
         if (visibleEntries.length > 0) {
-          setActiveSection(visibleEntries[0].target.id);
+          setActiveSection(
+            visibleEntries[0].target.id
+          );
         }
       },
       {
@@ -226,13 +284,20 @@ function Search() {
       }
     );
 
-    elements.forEach((element) => observer.observe(element));
+    elements.forEach((element) => {
+      observer.observe(element);
+    });
 
     return () => observer.disconnect();
   }, [result, sectionContents]);
 
   return (
     <main className="search-page">
+
+      {/* =========================================
+          NAVIGATION
+      ========================================= */}
+
       <nav className="inner-navbar">
         <Link to="/" className="logo">
           chronicle
@@ -246,10 +311,17 @@ function Search() {
       </nav>
 
       <section className="search-content">
-        <div className="search-header">
-          <p className="eyebrow">CHRONICLE</p>
 
-          {!result && (
+        {/* =========================================
+            SEARCH HEADER
+        ========================================= */}
+
+        <div className="search-header">
+          <p className="eyebrow">
+            CHRONICLE
+          </p>
+
+          {!searchResults.length && !result && (
             <>
               <h1>
                 What are you
@@ -261,7 +333,9 @@ function Search() {
                 className="large-search"
                 onSubmit={handleSearch}
               >
-                <span className="search-icon">⌕</span>
+                <span className="search-icon">
+                  ⌕
+                </span>
 
                 <input
                   type="text"
@@ -288,12 +362,14 @@ function Search() {
             </>
           )}
 
-          {result && (
+          {(searchResults.length > 0 || result) && (
             <form
               className="large-search compact-search"
               onSubmit={handleSearch}
             >
-              <span className="search-icon">⌕</span>
+              <span className="search-icon">
+                ⌕
+              </span>
 
               <input
                 type="text"
@@ -314,9 +390,19 @@ function Search() {
           )}
         </div>
 
+        {/* =========================================
+            LOADING / ERROR
+        ========================================= */}
+
         {loading && (
           <div className="search-status">
             Searching history...
+          </div>
+        )}
+
+        {selectingResult && (
+          <div className="search-status">
+            Opening historical reference...
           </div>
         )}
 
@@ -326,7 +412,82 @@ function Search() {
           </div>
         )}
 
-        {result && !loading && (
+        {/* =========================================
+            SEARCH RESULT SELECTION
+        ========================================= */}
+
+        {searchResults.length > 0 &&
+          !result &&
+          !loading &&
+          !selectingResult && (
+            <section className="search-selection">
+
+              <div className="search-selection-header">
+                <p className="eyebrow">
+                  SEARCH RESULTS
+                </p>
+
+                <h2>
+                  Choose a reference
+                </h2>
+
+                <p>
+                  Select the historical subject you were
+                  looking for.
+                </p>
+              </div>
+
+              <div className="search-results-list">
+
+                {searchResults.map((searchResult) => (
+                  <button
+                    type="button"
+                    key={searchResult.pageId}
+                    className="search-result-option"
+                    onClick={(event) => {
+                      event.currentTarget.blur();
+                      selectSearchResult(searchResult);
+                    }}
+                  >
+                    <div className="search-result-option-content">
+                      <h3>
+                        {searchResult.title}
+                      </h3>
+
+                      <p>
+                        {searchResult.description}
+                      </p>
+                    </div>
+
+                    <span className="search-result-arrow">
+                      →
+                    </span>
+                  </button>
+                ))}
+
+              </div>
+            </section>
+          )}
+
+        {/* =========================================
+            NO RESULTS
+        ========================================= */}
+
+        {!loading &&
+          !result &&
+          !searchResults.length &&
+          !error &&
+          query && (
+            <div className="search-status">
+              No historical references found.
+            </div>
+          )}
+
+        {/* =========================================
+            ARTICLE
+        ========================================= */}
+
+        {result && !selectingResult && (
           <article className="history-result">
 
             {/* =========================================
@@ -338,13 +499,14 @@ function Search() {
                 HISTORICAL REFERENCE
               </p>
 
-              <h2>{result.title}</h2>
+              <h2>
+                {result.title}
+              </h2>
 
               <p className="history-subtitle">
                 A concise historical reference from Chronicle.
               </p>
             </header>
-
 
             {/* =========================================
                 READING AREA
@@ -353,7 +515,7 @@ function Search() {
             <div className="history-reading-layout">
 
               {/* =========================================
-                  FIXED CONTENTS NAVIGATION
+                  FIXED TIMELINE
               ========================================= */}
 
               <aside className="history-sidebar">
@@ -381,15 +543,21 @@ function Search() {
                         goToSection("introduction")
                       }
                     >
-                      <span>01</span>
-                      <strong>Introduction</strong>
+                      <span>
+                        01
+                      </span>
+
+                      <strong>
+                        Introduction
+                      </strong>
                     </button>
 
-                    {/* Article sections */}
+                    {/* Other sections */}
 
                     {sectionContents.map(
                       (section, index) => {
-                        const sectionId = `section-${section.index}`;
+                        const sectionId =
+                          `section-${section.index}`;
 
                         return (
                           <button
@@ -421,20 +589,18 @@ function Search() {
                         );
                       }
                     )}
+
                   </nav>
                 </div>
               </aside>
 
-
               {/* =========================================
-                  ARTICLE
+                  ARTICLE CONTENT
               ========================================= */}
 
               <div className="history-article">
 
-                {/* =========================================
-                    INTRODUCTION
-                ========================================= */}
+                {/* Introduction */}
 
                 <section
                   id="introduction"
@@ -468,26 +634,26 @@ function Search() {
 
                   <div className="history-section-content-wrapper">
                     <div className="history-section-content">
-                      <p>{result.extract}</p>
+                      <p>
+                        {result.extract}
+                      </p>
                     </div>
                   </div>
                 </section>
 
-
-                {/* =========================================
-                    OTHER SECTIONS
-                ========================================= */}
+                {/* Other sections */}
 
                 {sectionContents.map(
                   (section, index) => {
-                    const sectionId = `section-${section.index}`;
+                    const sectionId =
+                      `section-${section.index}`;
 
                     return (
                       <section
                         key={section.index}
                         id={sectionId}
                         className={`history-section ${
-                          openSection === section.index
+                          openSection === sectionId
                             ? "open"
                             : ""
                         }`}
@@ -496,7 +662,7 @@ function Search() {
                           type="button"
                           className="history-section-toggle"
                           onClick={() =>
-                            toggleSection(section.index)
+                            toggleSection(sectionId)
                           }
                         >
                           <span className="history-section-number">
@@ -514,7 +680,7 @@ function Search() {
                           </span>
 
                           <span className="history-section-icon">
-                            {openSection === section.index
+                            {openSection === sectionId
                               ? "−"
                               : "+"}
                           </span>
@@ -524,7 +690,8 @@ function Search() {
                           <div
                             className="history-section-content"
                             dangerouslySetInnerHTML={{
-                              __html: section.content,
+                              __html:
+                                section.content,
                             }}
                           />
                         </div>
@@ -532,9 +699,9 @@ function Search() {
                     );
                   }
                 )}
+
               </div>
             </div>
-
 
             {/* =========================================
                 RELATED HISTORY
@@ -546,7 +713,9 @@ function Search() {
                   CONTINUE EXPLORING
                 </p>
 
-                <h3>Related History</h3>
+                <h3>
+                  Related History
+                </h3>
 
                 <p>
                   Explore the people, events, and places
@@ -561,6 +730,7 @@ function Search() {
 
           </article>
         )}
+
       </section>
     </main>
   );
