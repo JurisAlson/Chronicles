@@ -1,15 +1,57 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./Search.css";
+
+function cleanWikipediaContent(html) {
+  const parser = new DOMParser();
+  const document = parser.parseFromString(html, "text/html");
+
+  const selectorsToRemove = [
+    ".reflist",
+    ".references",
+    ".mw-references-wrap",
+    "ol.references",
+    "sup.reference",
+    ".reference",
+    ".mw-cite-backlink",
+    ".citation",
+    ".noprint",
+    ".navbox",
+    ".metadata",
+    ".ambox",
+    ".hatnote",
+    ".mw-editsection",
+    ".infobox",
+    ".sidebar",
+  ];
+
+  selectorsToRemove.forEach((selector) => {
+    document.querySelectorAll(selector).forEach((element) => {
+      element.remove();
+    });
+  });
+
+  document.querySelectorAll("p").forEach((paragraph) => {
+    if (!paragraph.textContent.trim()) {
+      paragraph.remove();
+    }
+  });
+
+  return document.body.innerHTML;
+}
 
 function Search() {
   const [query, setQuery] = useState("");
   const [result, setResult] = useState(null);
+
   const [sections, setSections] = useState([]);
   const [sectionContents, setSectionContents] = useState([]);
-  const [openSection, setOpenSection] = useState(null);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const [openSection, setOpenSection] = useState("introduction");
+  const [activeSection, setActiveSection] = useState("introduction");
 
   async function handleSearch(event) {
     event.preventDefault();
@@ -23,10 +65,10 @@ function Search() {
     setResult(null);
     setSections([]);
     setSectionContents([]);
-    setOpenSection(null);
+    setOpenSection("introduction");
+    setActiveSection("introduction");
 
     try {
-      // SEARCH WIKIPEDIA
       const response = await fetch(
         `http://localhost:8080/api/history/search?query=${encodeURIComponent(
           query
@@ -41,7 +83,6 @@ function Search() {
 
       setResult(data);
 
-      // GET WIKIPEDIA SECTIONS
       const sectionsResponse = await fetch(
         `http://localhost:8080/api/history/sections?pageId=${data.pageId}`
       );
@@ -52,7 +93,6 @@ function Search() {
 
       const sectionsData = await sectionsResponse.json();
 
-      // REMOVE UNNECESSARY WIKIPEDIA SECTIONS
       const ignoredSections = [
         "References",
         "Sources",
@@ -63,19 +103,26 @@ function Search() {
         "Bibliography",
         "Citations",
         "Footnotes",
+        "Works cited",
+        "Biographical studies",
+        "Historiography and memory",
+        "Specialty studies",
+        "External links and references",
       ];
 
-      const usefulSections = sectionsData.filter(
-        (section) =>
-          !ignoredSections.some(
-            (ignored) =>
-              section.title.toLowerCase() === ignored.toLowerCase()
-          )
-      );
+      const usefulSections = sectionsData.filter((section) => {
+        const title = section.title
+          .replace(/<[^>]*>/g, "")
+          .trim()
+          .toLowerCase();
+
+        return !ignoredSections.some(
+          (ignored) => title === ignored.toLowerCase()
+        );
+      });
 
       setSections(usefulSections);
 
-      // LOAD SECTION CONTENT
       const contents = [];
 
       for (const section of usefulSections) {
@@ -93,7 +140,7 @@ function Search() {
           contents.push({
             title: section.title,
             index: section.index,
-            content: content,
+            content: cleanWikipediaContent(content),
           });
         } catch (sectionError) {
           console.error(
@@ -104,24 +151,88 @@ function Search() {
       }
 
       setSectionContents(contents);
-    } catch (error) {
-      console.error(error);
+    } catch (searchError) {
+      console.error(searchError);
       setError("Unable to search history right now.");
     } finally {
       setLoading(false);
     }
   }
 
-  function toggleSection(sectionIndex) {
+  function toggleSection(sectionId) {
     setOpenSection((current) =>
-      current === sectionIndex ? null : sectionIndex
+      current === sectionId ? null : sectionId
     );
   }
 
+  function goToSection(sectionId) {
+    setOpenSection(sectionId);
+    setActiveSection(sectionId);
+
+    requestAnimationFrame(() => {
+      const element = document.getElementById(sectionId);
+
+      if (element) {
+        element.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    });
+  }
+
+  /*
+   * Track which section is currently visible.
+   * This keeps the Contents navigator synchronized
+   * with the reader's position.
+   */
+  useEffect(() => {
+    if (!result) {
+      return;
+    }
+
+    const sectionIds = [
+      "introduction",
+      ...sectionContents.map(
+        (section) => `section-${section.index}`
+      ),
+    ];
+
+    const elements = sectionIds
+      .map((id) => document.getElementById(id))
+      .filter(Boolean);
+
+    if (!elements.length) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visibleEntries = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort(
+            (a, b) =>
+              a.boundingClientRect.top -
+              b.boundingClientRect.top
+          );
+
+        if (visibleEntries.length > 0) {
+          setActiveSection(visibleEntries[0].target.id);
+        }
+      },
+      {
+        rootMargin: "-15% 0px -65% 0px",
+        threshold: 0,
+      }
+    );
+
+    elements.forEach((element) => observer.observe(element));
+
+    return () => observer.disconnect();
+  }, [result, sectionContents]);
+
   return (
     <main className="search-page">
-
-      {/* NAVIGATION */}
       <nav className="inner-navbar">
         <Link to="/" className="logo">
           chronicle
@@ -134,14 +245,9 @@ function Search() {
         </div>
       </nav>
 
-      {/* SEARCH AREA */}
       <section className="search-content">
-
         <div className="search-header">
-
-          <p className="eyebrow">
-            CHRONICLE
-          </p>
+          <p className="eyebrow">CHRONICLE</p>
 
           {!result && (
             <>
@@ -155,15 +261,15 @@ function Search() {
                 className="large-search"
                 onSubmit={handleSearch}
               >
-                <span className="search-icon">
-                  ⌕
-                </span>
+                <span className="search-icon">⌕</span>
 
                 <input
                   type="text"
                   placeholder="Search a person, event, war, civilization..."
                   value={query}
-                  onChange={(event) => setQuery(event.target.value)}
+                  onChange={(event) =>
+                    setQuery(event.target.value)
+                  }
                   autoFocus
                 />
 
@@ -187,15 +293,15 @@ function Search() {
               className="large-search compact-search"
               onSubmit={handleSearch}
             >
-              <span className="search-icon">
-                ⌕
-              </span>
+              <span className="search-icon">⌕</span>
 
               <input
                 type="text"
                 placeholder="Search another subject..."
                 value={query}
-                onChange={(event) => setQuery(event.target.value)}
+                onChange={(event) =>
+                  setQuery(event.target.value)
+                }
               />
 
               <button
@@ -206,145 +312,241 @@ function Search() {
               </button>
             </form>
           )}
-
         </div>
 
-        {/* LOADING */}
         {loading && (
           <div className="search-status">
             Searching history...
           </div>
         )}
 
-        {/* ERROR */}
         {error && (
           <div className="search-status">
             {error}
           </div>
         )}
 
-        {/* HISTORICAL ARTICLE */}
         {result && !loading && (
           <article className="history-result">
 
-            {/* ARTICLE HEADER */}
+            {/* =========================================
+                ARTICLE HEADER
+            ========================================= */}
+
             <header className="history-result-header">
               <p className="eyebrow">
                 HISTORICAL REFERENCE
               </p>
 
-              <h2>
-                {result.title}
-              </h2>
+              <h2>{result.title}</h2>
 
               <p className="history-subtitle">
                 A concise historical reference from Chronicle.
               </p>
             </header>
 
-            {/* INTRODUCTION */}
-            <section className="history-introduction">
-              <div className="history-introduction-label">
-                Introduction
-              </div>
 
-              <div className="history-introduction-content">
-                <p>
-                  {result.extract}
-                </p>
-              </div>
-            </section>
+            {/* =========================================
+                READING AREA
+            ========================================= */}
 
-            {/* TABLE OF CONTENTS */}
-            {sections.length > 0 && (
-              <nav className="history-contents">
-                <div className="history-contents-header">
-                  Contents
-                </div>
+            <div className="history-reading-layout">
 
-                <div className="history-contents-list">
-                  {sections.map((section, index) => (
-                    <a
-                      key={section.index}
-                      href={`#section-${section.index}`}
-                      onClick={() => setOpenSection(section.index)}
-                    >
-                      <span>
-                        {String(index + 1).padStart(2, "0")}
-                      </span>
+              {/* =========================================
+                  FIXED CONTENTS NAVIGATION
+              ========================================= */}
 
-                      {section.title}
-                    </a>
-                  ))}
-                </div>
-              </nav>
-            )}
+              <aside className="history-sidebar">
+                <div className="history-sidebar-inner">
 
-            {/* ARTICLE SECTIONS */}
-            <div className="history-article">
+                  <div className="history-sidebar-title">
+                    Contents
+                  </div>
 
-              {sectionContents.map((section, index) => {
-                const isOpen = openSection === section.index;
-
-                return (
-                  <section
-                    key={section.index}
-                    id={`section-${section.index}`}
-                    className={`history-section ${
-                      isOpen ? "open" : ""
-                    }`}
+                  <nav
+                    className="history-sidebar-nav"
+                    aria-label="Article contents"
                   >
 
-                    {/* SECTION HEADER */}
+                    {/* Introduction */}
+
                     <button
-                      className="history-section-toggle"
+                      type="button"
+                      className={`history-sidebar-link ${
+                        activeSection === "introduction"
+                          ? "active"
+                          : ""
+                      }`}
                       onClick={() =>
-                        toggleSection(section.index)
+                        goToSection("introduction")
                       }
-                      aria-expanded={isOpen}
                     >
-                      <span className="history-section-number">
-                        {String(index + 1).padStart(2, "0")}
-                      </span>
-
-                      <span className="history-section-title">
-                        {section.title}
-                      </span>
-
-                      <span className="history-section-icon">
-                        {isOpen ? "−" : "+"}
-                      </span>
+                      <span>01</span>
+                      <strong>Introduction</strong>
                     </button>
 
-                    {/* SECTION CONTENT */}
-                    <div
-                      className="history-section-content-wrapper"
-                    >
-                      <div
-                        className="history-section-content"
-                        dangerouslySetInnerHTML={{
-                          __html: section.content,
-                        }}
-                      />
+                    {/* Article sections */}
+
+                    {sectionContents.map(
+                      (section, index) => {
+                        const sectionId = `section-${section.index}`;
+
+                        return (
+                          <button
+                            type="button"
+                            key={section.index}
+                            className={`history-sidebar-link ${
+                              activeSection === sectionId
+                                ? "active"
+                                : ""
+                            }`}
+                            onClick={() =>
+                              goToSection(sectionId)
+                            }
+                          >
+                            <span>
+                              {String(index + 2).padStart(
+                                2,
+                                "0"
+                              )}
+                            </span>
+
+                            <strong>
+                              {section.title.replace(
+                                /<[^>]*>/g,
+                                ""
+                              )}
+                            </strong>
+                          </button>
+                        );
+                      }
+                    )}
+                  </nav>
+                </div>
+              </aside>
+
+
+              {/* =========================================
+                  ARTICLE
+              ========================================= */}
+
+              <div className="history-article">
+
+                {/* =========================================
+                    INTRODUCTION
+                ========================================= */}
+
+                <section
+                  id="introduction"
+                  className={`history-section ${
+                    openSection === "introduction"
+                      ? "open"
+                      : ""
+                  }`}
+                >
+                  <button
+                    type="button"
+                    className="history-section-toggle"
+                    onClick={() =>
+                      toggleSection("introduction")
+                    }
+                  >
+                    <span className="history-section-number">
+                      01
+                    </span>
+
+                    <span className="history-section-title">
+                      Introduction
+                    </span>
+
+                    <span className="history-section-icon">
+                      {openSection === "introduction"
+                        ? "−"
+                        : "+"}
+                    </span>
+                  </button>
+
+                  <div className="history-section-content-wrapper">
+                    <div className="history-section-content">
+                      <p>{result.extract}</p>
                     </div>
+                  </div>
+                </section>
 
-                  </section>
-                );
-              })}
 
+                {/* =========================================
+                    OTHER SECTIONS
+                ========================================= */}
+
+                {sectionContents.map(
+                  (section, index) => {
+                    const sectionId = `section-${section.index}`;
+
+                    return (
+                      <section
+                        key={section.index}
+                        id={sectionId}
+                        className={`history-section ${
+                          openSection === section.index
+                            ? "open"
+                            : ""
+                        }`}
+                      >
+                        <button
+                          type="button"
+                          className="history-section-toggle"
+                          onClick={() =>
+                            toggleSection(section.index)
+                          }
+                        >
+                          <span className="history-section-number">
+                            {String(index + 2).padStart(
+                              2,
+                              "0"
+                            )}
+                          </span>
+
+                          <span className="history-section-title">
+                            {section.title.replace(
+                              /<[^>]*>/g,
+                              ""
+                            )}
+                          </span>
+
+                          <span className="history-section-icon">
+                            {openSection === section.index
+                              ? "−"
+                              : "+"}
+                          </span>
+                        </button>
+
+                        <div className="history-section-content-wrapper">
+                          <div
+                            className="history-section-content"
+                            dangerouslySetInnerHTML={{
+                              __html: section.content,
+                            }}
+                          />
+                        </div>
+                      </section>
+                    );
+                  }
+                )}
+              </div>
             </div>
 
-            {/* RELATED HISTORY */}
-            <section className="related-history">
 
+            {/* =========================================
+                RELATED HISTORY
+            ========================================= */}
+
+            <section className="related-history">
               <div className="related-history-header">
                 <p className="eyebrow">
                   CONTINUE EXPLORING
                 </p>
 
-                <h3>
-                  Related History
-                </h3>
+                <h3>Related History</h3>
 
                 <p>
                   Explore the people, events, and places
@@ -355,14 +557,11 @@ function Search() {
               <div className="related-history-placeholder">
                 Related historical references will appear here.
               </div>
-
             </section>
 
           </article>
         )}
-
       </section>
-
     </main>
   );
 }
