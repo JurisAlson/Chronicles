@@ -316,16 +316,53 @@ private String cleanWikipediaHtml(
     String cleaned = html;
 
     /*
-     * Remove edit links.
+ * ============================================================
+ * REMOVE WIKIPEDIA CITE ERROR MESSAGES
+ * ============================================================
+ */
+
+cleaned = cleaned.replaceAll(
+        "(?is)<p[^>]*>\\s*Cite error:.*?</p>",
+        ""
+);
+
+cleaned = cleaned.replaceAll(
+        "(?is)Cite error:\\s*There are.*?(?=<p|<div|<h[1-6]|$)",
+        ""
+);
+
+cleaned = cleaned.replaceAll(
+        "(?is)Cite error:\\s*There are.*?(?=<br\\s*/?>|$)",
+        ""
+);
+
+    /*
+     * ============================================================
+     * REMOVE EDIT LINKS
+     * ============================================================
      */
+
     cleaned = cleaned.replaceAll(
             "(?s)<span[^>]*class=\"[^\"]*mw-editsection[^\"]*\"[^>]*>.*?</span>",
             ""
     );
 
+    cleaned = cleaned.replaceAll(
+            "(?s)<a[^>]*href=\"[^\"]*action=edit[^\"]*\"[^>]*>.*?</a>",
+            ""
+    );
+
+    cleaned = cleaned.replace(
+            "[edit]",
+            ""
+    );
+
     /*
-     * Remove reference lists.
+     * ============================================================
+     * REMOVE REFERENCE LISTS
+     * ============================================================
      */
+
     cleaned = cleaned.replaceAll(
             "(?s)<div[^>]*class=\"[^\"]*(reflist|references|mw-references-wrap)[^\"]*\"[^>]*>.*?</div>",
             ""
@@ -337,16 +374,22 @@ private String cleanWikipediaHtml(
     );
 
     /*
-     * Remove citation superscripts.
+     * ============================================================
+     * REMOVE CITATION SUPERSCRIPTS
+     * ============================================================
      */
+
     cleaned = cleaned.replaceAll(
             "(?s)<sup[^>]*class=\"[^\"]*(reference|citation)[^\"]*\"[^>]*>.*?</sup>",
             ""
     );
 
     /*
-     * Remove Wikipedia navigation tables.
+     * ============================================================
+     * REMOVE WIKIPEDIA NAVIGATION TABLES
+     * ============================================================
      */
+
     cleaned = cleaned.replaceAll(
             "(?s)<table[^>]*class=\"[^\"]*(navbox|vertical-navbox|sidebar|infobox)[^\"]*\"[^>]*>.*?</table>",
             ""
@@ -355,37 +398,43 @@ private String cleanWikipediaHtml(
     /*
      * Remove remaining tables.
      *
-     * This gets rid of things such as:
-     *
-     * Timelines of World War II
-     * Chronological
-     * Prelude
-     * Aftermath
+     * This gets rid of Wikipedia navigation/timeline tables
+     * that are not useful in Chronicle's article text.
      */
+
     cleaned = cleaned.replaceAll(
             "(?s)<table[^>]*>.*?</table>",
             ""
     );
 
     /*
-     * Remove navigation containers.
+     * ============================================================
+     * REMOVE NAVIGATION CONTAINERS
+     * ============================================================
      */
+
     cleaned = cleaned.replaceAll(
             "(?s)<div[^>]*role=\"navigation\"[^>]*>.*?</div>",
             ""
     );
 
     /*
-     * Remove common Wikipedia metadata.
+     * ============================================================
+     * REMOVE COMMON WIKIPEDIA METADATA
+     * ============================================================
      */
+
     cleaned = cleaned.replaceAll(
             "(?s)<div[^>]*class=\"[^\"]*(metadata|hatnote|ambox|portal|sistersitebox|catlinks|authority-control)[^\"]*\"[^>]*>.*?</div>",
             ""
     );
 
     /*
-     * Remove scripts and styles.
+     * ============================================================
+     * REMOVE SCRIPTS AND STYLES
+     * ============================================================
      */
+
     cleaned = cleaned.replaceAll(
             "(?s)<script[^>]*>.*?</script>",
             ""
@@ -397,16 +446,22 @@ private String cleanWikipediaHtml(
     );
 
     /*
-     * Remove empty paragraphs.
+     * ============================================================
+     * REMOVE EMPTY PARAGRAPHS
+     * ============================================================
      */
+
     cleaned = cleaned.replaceAll(
             "(?s)<p>\\s*</p>",
             ""
     );
 
     /*
-     * Remove leftover [edit] text.
+     * ============================================================
+     * REMOVE LEFTOVER EDIT TEXT
+     * ============================================================
      */
+
     cleaned = cleaned.replace(
             "[edit]",
             ""
