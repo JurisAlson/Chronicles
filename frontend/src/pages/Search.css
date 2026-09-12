@@ -403,39 +403,55 @@
 }
 
 
-/* =========================================
-   READING LAYOUT
-========================================= */
-
 .history-reading-layout {
   position: relative;
-
   width: 100%;
-
-  display: grid;
-  grid-template-columns: 210px minmax(0, 1fr);
-
+  display: block;
   padding: 80px 6vw 0;
 }
 
 
 /* =========================================
-   TIMELINE SIDEBAR
+   FIXED BOOKMARK TIMELINE
+========================================= */
+
+/* =========================================
+   FIXED BOOKMARK TIMELINE
 ========================================= */
 
 .history-sidebar {
-  position: relative;
+  position: fixed;
+  top: 120px;
+  left: 6vw;
+  width: 150px;
+  z-index: 20;
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateX(-10px);
+
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease,
+    visibility 0.3s ease;
+}
+
+.history-sidebar.history-sidebar-visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateX(0);
 }
 
 .history-sidebar-inner {
-  position: sticky;
-  top: 120px;
-
-  width: 120px;
+  position: relative;
+  top: auto;
+  width: 150px;
 }
 
 .history-sidebar-title {
-  margin-bottom: 26px;
+  margin: 0 0 26px;
 
   color: #5f5b55;
 
@@ -443,6 +459,7 @@
   font-size: 0.62rem;
   font-weight: 600;
   letter-spacing: 0.14em;
+
   text-transform: uppercase;
 }
 
@@ -454,12 +471,16 @@
 .history-sidebar-nav {
   position: relative;
 
+  width: 150px;
+
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-/* Continuous line */
+
+/* Continuous bookmark line */
+
 .history-sidebar-nav::before {
   content: "";
 
@@ -477,13 +498,16 @@
 }
 
 
-/* Timeline item */
+/* =========================================
+   TIMELINE ITEM
+========================================= */
 
 .history-sidebar-link {
   position: relative;
-  z-index: 1;
 
-  width: 100%;
+  z-index: 2;
+
+  width: 150px;
   height: 58px;
 
   display: flex;
@@ -499,12 +523,21 @@
 }
 
 
-/* Hide old number visually */
+/* =========================================
+   TIMELINE DOT
+========================================= */
+
 .history-sidebar-link > span {
-  position: absolute;
+  position: relative;
+
+  z-index: 3;
+
+  display: block;
 
   width: 11px;
   height: 11px;
+
+  flex-shrink: 0;
 
   border: 1px solid #77736d;
   border-radius: 50%;
@@ -514,10 +547,9 @@
   font-size: 0;
 
   transition:
-    width 0.25s ease,
-    height 0.25s ease,
     background 0.25s ease,
-    border-color 0.25s ease;
+    border-color 0.25s ease,
+    transform 0.25s ease;
 }
 
 
@@ -528,20 +560,21 @@
   height: 11px;
 
   border-color: #a9a39a;
-
   background: #a9a39a;
 }
 
 
-/* Title hidden until hover */
+/* =========================================
+   TIMELINE TITLE
+========================================= */
 
 .history-sidebar-link strong {
   position: absolute;
 
-  left: 24px;
+  left: calc(50% + 18px);
 
   width: max-content;
-  max-width: 180px;
+  max-width: 190px;
 
   opacity: 0;
 
@@ -552,7 +585,9 @@
   font-family: "DM Sans", sans-serif;
   font-size: 0.68rem;
   font-weight: 500;
-  line-height: 1.3;
+  line-height: 1.35;
+
+  white-space: normal;
 
   transform: translateX(-5px);
 
@@ -562,8 +597,6 @@
 }
 
 
-/* Hover title */
-
 .history-sidebar-link:hover strong,
 .history-sidebar-link.active:hover strong {
   opacity: 1;
@@ -571,14 +604,18 @@
 }
 
 
-/* Slight dot emphasis on hover */
+/* =========================================
+   DOT HOVER
+========================================= */
 
 .history-sidebar-link:hover > span {
   border-color: #aaa49a;
+  transform: scale(1.08);
 }
 
 .history-sidebar-link.active:hover > span {
   background: #aaa49a;
+  border-color: #aaa49a;
 }
 
 
@@ -587,8 +624,13 @@
 ========================================= */
 
 .history-article {
-  width: 100%;
+  width: min(900px, calc(100% - 290px));
+
+  margin-left: 220px;
+
   max-width: 900px;
+
+  min-width: 0;
 
   padding-bottom: 120px;
 }

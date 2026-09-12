@@ -57,6 +57,7 @@ function Search() {
 
   const [openSection, setOpenSection] = useState("introduction");
   const [activeSection, setActiveSection] = useState("introduction");
+  const [showTimeline, setShowTimeline] = useState(false);
 
   /* =========================================
      SEARCH WIKIPEDIA
@@ -290,7 +291,52 @@ function Search() {
 
     return () => observer.disconnect();
   }, [result, sectionContents]);
+  /* =========================================
+     SHOW TIMELINE ONLY DURING READING
+  ========================================= */
 
+  useEffect(() => {
+    if (!result) {
+      setShowTimeline(false);
+      return;
+    }
+
+    function handleScroll() {
+      const readingLayout = document.querySelector(
+        ".history-reading-layout"
+      );
+
+      const relatedHistory = document.querySelector(
+        ".related-history"
+      );
+
+      if (!readingLayout) {
+        setShowTimeline(false);
+        return;
+      }
+
+      const readingTop =
+        readingLayout.getBoundingClientRect().top;
+
+      const relatedTop = relatedHistory
+        ? relatedHistory.getBoundingClientRect().top
+        : Infinity;
+
+  const shouldShow =
+    readingTop <= 120 &&
+    relatedTop > 700;
+
+      setShowTimeline(shouldShow);
+    }
+
+    window.addEventListener("scroll", handleScroll);
+
+    handleScroll();
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [result]);
   return (
     <main className="search-page">
 
@@ -518,8 +564,12 @@ function Search() {
                   FIXED TIMELINE
               ========================================= */}
 
-              <aside className="history-sidebar">
-                <div className="history-sidebar-inner">
+<aside
+  className={`history-sidebar ${
+    showTimeline ? "history-sidebar-visible" : ""
+  }`}
+>
+  <div className="history-sidebar-inner">
 
                   <div className="history-sidebar-title">
                     Contents
