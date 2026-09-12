@@ -3,7 +3,6 @@ package com.chronicle.backend.controller;
 import com.chronicle.backend.dto.WikipediaSearchOption;
 import com.chronicle.backend.dto.WikipediaSection;
 import com.chronicle.backend.service.WikipediaService;
-import com.chronicle.backend.dto.WikipediaRelatedPage;
 
 import java.util.List;
 
@@ -51,11 +50,4 @@ public class HistoryController {
     ) {
         return wikipediaService.getWikipediaArticle(pageId);
     }
-    @GetMapping("/api/history/related")
-    public List<WikipediaRelatedPage> related(
-            @RequestParam long pageId
-    ) {
-        return wikipediaService.getRelatedPages(pageId);
-    }
-    
 }
