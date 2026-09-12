@@ -195,84 +195,225 @@ public class WikipediaService {
      */
 
     public String getWikipediaSectionContent(
-            long pageId,
-            int sectionIndex
-    ) {
+        long pageId,
+        int sectionIndex
+) {
 
-        return restClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/w/api.php")
-                        .queryParam("action", "parse")
-                        .queryParam("pageid", pageId)
-                        .queryParam("prop", "text")
-                        .queryParam("section", sectionIndex)
-                        .queryParam("format", "json")
-                        .build()
-                )
-                .retrieve()
-                .body(String.class);
+    String response = restClient.get()
+            .uri(uriBuilder -> uriBuilder
+                    .path("/w/api.php")
+                    .queryParam("action", "parse")
+                    .queryParam("pageid", pageId)
+                    .queryParam("prop", "text")
+                    .queryParam("section", sectionIndex)
+                    .queryParam("format", "json")
+                    .build()
+            )
+            .retrieve()
+            .body(String.class);
+
+    try {
+
+        JsonNode root =
+                objectMapper.readTree(response);
+
+        String html =
+                root.path("parse")
+                        .path("text")
+                        .path("*")
+                        .asText("");
+
+        if (html.isBlank()) {
+            return "";
+        }
+
+        return cleanWikipediaHtml(html);
+
+    } catch (Exception e) {
+
+        throw new RuntimeException(
+                "Failed to parse Wikipedia section response",
+                e
+        );
     }
+}
+/*
+ * ============================================================
+ * GET WIKIPEDIA ARTICLE INTRODUCTION
+ * ============================================================
+ *
+ * Used by:
+ *
+ * GET /api/history/article?pageId=...
+ *
+ * Returns the plain-text introduction of the article.
+ */
+public String getWikipediaArticle(
+        long pageId
+) {
+
+    String response = restClient.get()
+            .uri(uriBuilder -> uriBuilder
+                    .path("/w/api.php")
+                    .queryParam("action", "query")
+                    .queryParam("prop", "extracts")
+                    .queryParam("exintro", "true")
+                    .queryParam("explaintext", "true")
+                    .queryParam("pageids", pageId)
+                    .queryParam("format", "json")
+                    .build()
+            )
+            .retrieve()
+            .body(String.class);
+
+    try {
+
+        JsonNode root =
+                objectMapper.readTree(response);
+
+        JsonNode pages =
+                root.path("query")
+                        .path("pages");
+
+        var iterator = pages.elements();
+
+        if (!iterator.hasNext()) {
+            return "";
+        }
+
+        JsonNode page = iterator.next();
+
+        return page
+                .path("extract")
+                .asText("");
+
+    } catch (Exception e) {
+
+        throw new RuntimeException(
+                "Failed to parse Wikipedia article response",
+                e
+        );
+    }
+}
+
+
+/*
+ * ============================================================
+ * CLEAN WIKIPEDIA HTML
+ * ============================================================
+ *
+ * Removes Wikipedia navigation, references, tables,
+ * metadata, edit links, and other unwanted elements.
+ */
+private String cleanWikipediaHtml(
+        String html
+) {
+
+    if (html == null || html.isBlank()) {
+        return "";
+    }
+
+    String cleaned = html;
 
     /*
-     * ============================================================
-     * GET ARTICLE INTRODUCTION
-     * ============================================================
-     *
-     * Returns the plaintext introduction of an article.
-     *
-     * This is used by Chronicle instead of displaying the entire
-     * Wikipedia article at once.
+     * Remove edit links.
      */
+    cleaned = cleaned.replaceAll(
+            "(?s)<span[^>]*class=\"[^\"]*mw-editsection[^\"]*\"[^>]*>.*?</span>",
+            ""
+    );
 
-    public String getWikipediaArticle(
-            long pageId
-    ) {
+    /*
+     * Remove reference lists.
+     */
+    cleaned = cleaned.replaceAll(
+            "(?s)<div[^>]*class=\"[^\"]*(reflist|references|mw-references-wrap)[^\"]*\"[^>]*>.*?</div>",
+            ""
+    );
 
-        String response = restClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/w/api.php")
-                        .queryParam("action", "query")
-                        .queryParam("prop", "extracts")
-                        .queryParam("exintro", "true")
-                        .queryParam("explaintext", "true")
-                        .queryParam("pageids", pageId)
-                        .queryParam("format", "json")
-                        .build()
-                )
-                .retrieve()
-                .body(String.class);
+    cleaned = cleaned.replaceAll(
+            "(?s)<ol[^>]*class=\"[^\"]*references[^\"]*\"[^>]*>.*?</ol>",
+            ""
+    );
 
-        try {
+    /*
+     * Remove citation superscripts.
+     */
+    cleaned = cleaned.replaceAll(
+            "(?s)<sup[^>]*class=\"[^\"]*(reference|citation)[^\"]*\"[^>]*>.*?</sup>",
+            ""
+    );
 
-            JsonNode root =
-                    objectMapper.readTree(response);
+    /*
+     * Remove Wikipedia navigation tables.
+     */
+    cleaned = cleaned.replaceAll(
+            "(?s)<table[^>]*class=\"[^\"]*(navbox|vertical-navbox|sidebar|infobox)[^\"]*\"[^>]*>.*?</table>",
+            ""
+    );
 
-            JsonNode pages =
-                    root.path("query")
-                            .path("pages");
+    /*
+     * Remove remaining tables.
+     *
+     * This gets rid of things such as:
+     *
+     * Timelines of World War II
+     * Chronological
+     * Prelude
+     * Aftermath
+     */
+    cleaned = cleaned.replaceAll(
+            "(?s)<table[^>]*>.*?</table>",
+            ""
+    );
 
-            JsonNode page =
-                    pages.elements().hasNext()
-                            ? pages.elements().next()
-                            : null;
+    /*
+     * Remove navigation containers.
+     */
+    cleaned = cleaned.replaceAll(
+            "(?s)<div[^>]*role=\"navigation\"[^>]*>.*?</div>",
+            ""
+    );
 
-            if (page == null) {
-                return "";
-            }
+    /*
+     * Remove common Wikipedia metadata.
+     */
+    cleaned = cleaned.replaceAll(
+            "(?s)<div[^>]*class=\"[^\"]*(metadata|hatnote|ambox|portal|sistersitebox|catlinks|authority-control)[^\"]*\"[^>]*>.*?</div>",
+            ""
+    );
 
-            return page
-                    .path("extract")
-                    .asText();
+    /*
+     * Remove scripts and styles.
+     */
+    cleaned = cleaned.replaceAll(
+            "(?s)<script[^>]*>.*?</script>",
+            ""
+    );
 
-        } catch (Exception e) {
+    cleaned = cleaned.replaceAll(
+            "(?s)<style[^>]*>.*?</style>",
+            ""
+    );
 
-            throw new RuntimeException(
-                    "Failed to parse Wikipedia article response",
-                    e
-            );
-        }
-    }
+    /*
+     * Remove empty paragraphs.
+     */
+    cleaned = cleaned.replaceAll(
+            "(?s)<p>\\s*</p>",
+            ""
+    );
 
+    /*
+     * Remove leftover [edit] text.
+     */
+    cleaned = cleaned.replace(
+            "[edit]",
+            ""
+    );
+
+    return cleaned.trim();
+}
     /*
      * ============================================================
      * GET RELATED HISTORY

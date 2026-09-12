@@ -57,4 +57,5 @@ public class HistoryController {
     ) {
         return wikipediaService.getRelatedPages(pageId);
     }
+    
 }
