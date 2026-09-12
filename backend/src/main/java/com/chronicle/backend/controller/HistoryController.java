@@ -43,4 +43,11 @@ public class HistoryController {
                 sectionIndex
         );
     }
+
+    @GetMapping("/api/history/article")
+    public String article(
+            @RequestParam long pageId
+    ) {
+        return wikipediaService.getWikipediaArticle(pageId);
+    }
 }
