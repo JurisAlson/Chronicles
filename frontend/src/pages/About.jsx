@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import Footer from "../components/Footer";
 
 function About() {
   return (
@@ -53,6 +54,7 @@ function About() {
 
       </section>
 
+      <Footer />
     </main>
   );
 }

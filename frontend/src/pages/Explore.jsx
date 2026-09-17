@@ -1,5 +1,6 @@
 import { Link, useSearchParams } from "react-router-dom";
 import "./Explore.css";
+import Footer from "../components/Footer";
 
 const collections = {
   ancient: {
@@ -181,7 +182,7 @@ function Explore() {
         </div>
 
       </section>
-
+      <Footer />
     </main>
   );
 }

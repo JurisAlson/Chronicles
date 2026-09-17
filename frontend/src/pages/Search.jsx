@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import "./Search.css";
+import Footer from "../components/Footer";
+
 
 const API_URL = "http://localhost:8080/api/history";
 
@@ -880,6 +882,8 @@ function Search() {
           </article>
         )}
       </section>
+            <Footer />
+            
     </main>
   );
 }
