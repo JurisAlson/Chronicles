@@ -1,0 +1,171 @@
+/* ========================================
+   CHRONICLE — ABOUT PAGE
+   ======================================== */
+
+.about-page {
+  min-height: 100vh;
+  background: #080808;
+  color: #f5f3ee;
+}
+
+
+/* ========================================
+   MAIN INTRO
+   ======================================== */
+
+.about-content {
+  width: min(1000px, calc(100% - 110px));
+  margin: 0 auto;
+  padding: 150px 0 0;
+}
+
+.about-content h1 {
+  margin-top: 25px;
+  max-width: 900px;
+  font-family: "Playfair Display", serif;
+  font-size: clamp(55px, 8vw, 105px);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+
+.about-text {
+  max-width: 650px;
+  margin-top: 55px;
+}
+
+.about-text p {
+  margin-bottom: 25px;
+  color: #aaa6a0;
+  font-family: "DM Sans", sans-serif;
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.about-text p:last-child {
+  margin-bottom: 0;
+}
+
+
+/* ========================================
+   ABOUT SECTIONS
+   ======================================== */
+
+.about-section {
+  width: min(1000px, calc(100% - 110px));
+  margin: 140px auto 0;
+  padding-top: 70px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.about-section-content {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 100px;
+  margin-top: 45px;
+}
+
+.about-section h2 {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(40px, 5vw, 65px);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.about-section .about-text {
+  margin-top: 0;
+}
+
+
+/* ========================================
+   VISION
+   ======================================== */
+
+.about-vision {
+  max-width: 850px;
+  margin-top: 55px;
+}
+
+.about-vision p {
+  margin-bottom: 30px;
+  font-family: "Playfair Display", serif;
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+}
+
+.about-vision p:last-child {
+  margin-bottom: 0;
+}
+
+
+/* ========================================
+   FINAL SECTION
+   ======================================== */
+
+.about-final {
+  margin-bottom: 40px;
+}
+
+.about-final strong {
+  color: #f5f3ee;
+  font-family: "Playfair Display", serif;
+  font-size: 24px;
+  font-weight: 400;
+}
+
+
+/* ========================================
+   MOBILE
+   ======================================== */
+
+@media (max-width: 768px) {
+
+  .about-content {
+    width: calc(100% - 50px);
+    padding-top: 110px;
+  }
+
+  .about-content h1 {
+    font-size: clamp(48px, 14vw, 75px);
+  }
+
+  .about-text {
+    margin-top: 40px;
+  }
+
+  .about-text p {
+    font-size: 15px;
+    line-height: 1.75;
+  }
+
+  .about-section {
+    width: calc(100% - 50px);
+    margin-top: 90px;
+    padding-top: 50px;
+  }
+
+  .about-section-content {
+    grid-template-columns: 1fr;
+    gap: 35px;
+    margin-top: 35px;
+  }
+
+  .about-section h2 {
+    font-size: 42px;
+  }
+
+  .about-vision {
+    margin-top: 40px;
+  }
+
+  .about-vision p {
+    font-size: 32px;
+  }
+
+  .about-final strong {
+    font-size: 21px;
+  }
+}
