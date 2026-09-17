@@ -1,0 +1,148 @@
+/* ========================================
+   CHRONICLE FOOTER
+   ======================================== */
+
+.site-footer {
+  margin-top: 120px;
+  padding: 70px 0 30px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  background: #080808;
+  color: #f5f3ee;
+}
+
+
+/* ========================================
+   FOOTER MAIN
+   ======================================== */
+
+.footer-main {
+  width: min(1100px, calc(100% - 110px));
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  gap: 80px;
+}
+
+
+/* ========================================
+   BRAND
+   ======================================== */
+
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.footer-logo {
+  font-family: "Playfair Display", serif;
+  font-size: 34px;
+  font-weight: 500;
+  letter-spacing: -1.5px;
+  color: #f5f3ee;
+}
+
+.footer-tagline {
+  max-width: 250px;
+  margin-top: 14px;
+  color: rgba(245, 243, 238, 0.45);
+  font-family: "DM Sans", sans-serif;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+
+/* ========================================
+   FOOTER LINKS
+   ======================================== */
+
+.footer-links {
+  display: flex;
+  gap: 100px;
+}
+
+.footer-column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 130px;
+}
+
+.footer-heading {
+  margin-bottom: 22px;
+  color: rgba(245, 243, 238, 0.4);
+  font-family: "DM Sans", sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+}
+
+.footer-column a {
+  margin-bottom: 12px;
+  color: rgba(245, 243, 238, 0.65);
+  font-family: "DM Sans", sans-serif;
+  font-size: 13px;
+  transition:
+    color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.footer-column a:hover {
+  color: #f5f3ee;
+  transform: translateX(4px);
+}
+
+
+/* ========================================
+   FOOTER BOTTOM
+   ======================================== */
+
+.footer-bottom {
+  width: min(1100px, calc(100% - 110px));
+  margin: 65px auto 0;
+  padding-top: 22px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+
+  color: rgba(245, 243, 238, 0.32);
+  font-family: "DM Sans", sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+}
+
+
+/* ========================================
+   MOBILE
+   ======================================== */
+
+@media (max-width: 768px) {
+
+  .site-footer {
+    margin-top: 80px;
+    padding: 55px 0 25px;
+  }
+
+  .footer-main,
+  .footer-bottom {
+    width: calc(100% - 50px);
+  }
+
+  .footer-main {
+    flex-direction: column;
+    gap: 55px;
+  }
+
+  .footer-links {
+    gap: 60px;
+  }
+
+  .footer-bottom {
+    margin-top: 55px;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+}

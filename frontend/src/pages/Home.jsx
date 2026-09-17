@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import Footer from "../components/Footer";
 
 function Home() {
   return (
@@ -44,7 +45,10 @@ function Home() {
             one of history's greatest civilizations.
           </p>
 
-          <Link to="/explore?category=ancient" className="hero-button">
+          <Link
+            to="/explore?category=ancient"
+            className="hero-button"
+          >
             Explore History
           </Link>
 
@@ -79,7 +83,6 @@ function Home() {
 
       </section>
 
-
       <section className="explore-preview">
 
         <div className="section-heading reveal">
@@ -98,7 +101,6 @@ function Home() {
           </p>
 
         </div>
-
 
         <div className="explore-list">
 
@@ -131,7 +133,6 @@ function Home() {
 
           </Link>
 
-
           <Link
             to="/explore?category=medieval"
             className="explore-item reveal"
@@ -161,7 +162,6 @@ function Home() {
 
           </Link>
 
-
           <Link
             to="/explore?category=wars"
             className="explore-item reveal"
@@ -190,7 +190,6 @@ function Home() {
             </div>
 
           </Link>
-
 
           <Link
             to="/explore?category=people"
@@ -224,6 +223,8 @@ function Home() {
         </div>
 
       </section>
+
+      <Footer />
 
     </main>
   );
