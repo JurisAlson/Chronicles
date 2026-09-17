@@ -4,7 +4,8 @@ import "./Search.css";
 import Footer from "../components/Footer";
 
 
-const API_URL = "http://localhost:8080/api/history";
+const API_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:8080/api/history";
 
 const MAX_ARTICLE_SECTIONS = 7;
 
