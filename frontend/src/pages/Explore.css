@@ -1,1 +1,221 @@
- 
+ /* ========================================
+   CHRONICLE — EXPLORE PAGE
+   ======================================== */
+
+.explore-page {
+  min-height: 100vh;
+  background: #080808;
+  color: #f5f3ee;
+  padding-bottom: 120px;
+}
+
+
+/* ========================================
+   HEADER
+   ======================================== */
+
+.explore-page-header {
+  width: min(1100px, calc(100% - 110px));
+  margin: 0 auto;
+  padding: 150px 0 85px;
+}
+
+.explore-page-eyebrow {
+  margin-bottom: 22px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(245, 243, 238, 0.55);
+}
+
+.explore-page-title {
+  max-width: 900px;
+  font-family: "Playfair Display", serif;
+  font-size: clamp(56px, 8vw, 105px);
+  font-weight: 500;
+  line-height: 0.95;
+  letter-spacing: -4px;
+}
+
+.explore-page-description {
+  max-width: 600px;
+  margin-top: 30px;
+  font-size: 16px;
+  line-height: 1.7;
+  color: rgba(245, 243, 238, 0.55);
+}
+
+
+/* ========================================
+   TOPIC LIST
+   ======================================== */
+
+.explore-topic-list {
+  width: min(1100px, calc(100% - 110px));
+  margin: 0 auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.explore-topic {
+  display: grid;
+  grid-template-columns: 80px 1fr 50px;
+  align-items: center;
+
+  min-height: 110px;
+  padding: 25px 10px;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+
+  color: #f5f3ee;
+  text-decoration: none;
+
+  transition:
+    background 0.3s ease,
+    padding-left 0.3s ease;
+}
+
+.explore-topic-number {
+  align-self: start;
+  padding-top: 7px;
+
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: rgba(245, 243, 238, 0.4);
+}
+
+.explore-topic-title {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(30px, 4vw, 52px);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -1.5px;
+}
+
+.explore-topic-arrow {
+  justify-self: end;
+
+  font-size: 27px;
+  font-weight: 300;
+  color: rgba(245, 243, 238, 0.4);
+
+  transition:
+    transform 0.3s ease,
+    color 0.3s ease;
+}
+
+.explore-topic:hover {
+  padding-left: 20px;
+  background: #0d0d0d;
+}
+
+.explore-topic:hover .explore-topic-number {
+  color: rgba(245, 243, 238, 0.7);
+}
+
+.explore-topic:hover .explore-topic-arrow {
+  transform: translateX(8px);
+  color: #f5f3ee;
+}
+
+
+/* ========================================
+   EXPLORE MORE
+   ======================================== */
+
+.explore-more {
+  width: min(1100px, calc(100% - 110px));
+  margin: 110px auto 0;
+}
+
+.explore-more-eyebrow {
+  margin-bottom: 25px;
+
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(245, 243, 238, 0.55);
+}
+
+.explore-category-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px 35px;
+
+  padding-top: 25px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.explore-category-link {
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: rgba(245, 243, 238, 0.55);
+
+  transition:
+    color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.explore-category-link:hover {
+  color: #f5f3ee;
+  transform: translateX(4px);
+}
+
+
+/* ========================================
+   MOBILE
+   ======================================== */
+
+@media (max-width: 768px) {
+
+  .explore-page {
+    padding-bottom: 80px;
+  }
+
+  .explore-page-header {
+    width: calc(100% - 50px);
+    padding: 110px 0 65px;
+  }
+
+  .explore-page-title {
+    font-size: clamp(52px, 14vw, 78px);
+    letter-spacing: -3px;
+  }
+
+  .explore-page-description {
+    margin-top: 25px;
+    font-size: 14px;
+  }
+
+  .explore-topic-list {
+    width: calc(100% - 50px);
+  }
+
+  .explore-topic {
+    grid-template-columns: 45px 1fr 30px;
+    min-height: 90px;
+    padding: 25px 5px;
+  }
+
+  .explore-topic:hover {
+    padding-left: 12px;
+  }
+
+  .explore-topic-title {
+    font-size: 28px;
+  }
+
+  .explore-topic-arrow {
+    font-size: 21px;
+  }
+
+  .explore-more {
+    width: calc(100% - 50px);
+    margin-top: 80px;
+  }
+
+  .explore-category-list {
+    gap: 18px 25px;
+  }
+}

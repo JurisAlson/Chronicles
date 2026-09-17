@@ -44,7 +44,7 @@ function Home() {
             one of history's greatest civilizations.
           </p>
 
-          <Link to="/explore" className="hero-button">
+          <Link to="/explore?category=ancient" className="hero-button">
             Explore History
           </Link>
 
@@ -103,7 +103,7 @@ function Home() {
         <div className="explore-list">
 
           <Link
-            to="/explore"
+            to="/explore?category=ancient"
             className="explore-item reveal"
           >
 
@@ -133,7 +133,7 @@ function Home() {
 
 
           <Link
-            to="/explore"
+            to="/explore?category=medieval"
             className="explore-item reveal"
           >
 
@@ -163,7 +163,7 @@ function Home() {
 
 
           <Link
-            to="/explore"
+            to="/explore?category=wars"
             className="explore-item reveal"
           >
 
@@ -193,7 +193,7 @@ function Home() {
 
 
           <Link
-            to="/explore"
+            to="/explore?category=people"
             className="explore-item reveal"
           >
 

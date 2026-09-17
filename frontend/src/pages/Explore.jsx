@@ -1,10 +1,87 @@
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
+import "./Explore.css";
+
+const collections = {
+  ancient: {
+    eyebrow: "ANCIENT WORLD",
+    title: "The Ancient World",
+    description:
+      "Civilizations, empires, wars, and people that shaped the foundations of the ancient world.",
+    topics: [
+      "Roman Republic",
+      "Roman Empire",
+      "Ancient Greece",
+      "Persian Empire",
+      "Alexander the Great",
+      "Ancient Egypt",
+      "Punic Wars",
+      "Fall of Rome",
+    ],
+  },
+
+  medieval: {
+    eyebrow: "MEDIEVAL WORLD",
+    title: "The Medieval World",
+    description:
+      "Kingdoms, empires, conflicts, and people that shaped the medieval age.",
+    topics: [
+      "Byzantine Empire",
+      "Viking Age",
+      "Norman Conquest",
+      "Crusades",
+      "Mongol Empire",
+      "Hundred Years' War",
+      "Black Death",
+      "Fall of Constantinople",
+    ],
+  },
+
+  wars: {
+    eyebrow: "WARS & BATTLES",
+    title: "Wars & Battles",
+    description:
+      "Conflicts and battles that changed the course of history.",
+    topics: [
+      "Battle of Marathon",
+      "Battle of Gaugamela",
+      "Battle of Cannae",
+      "Battle of Hastings",
+      "Battle of Tours",
+      "Battle of Waterloo",
+      "Napoleonic Wars",
+      "World War II",
+    ],
+  },
+
+  people: {
+    eyebrow: "PEOPLE & LEADERS",
+    title: "People & Leaders",
+    description:
+      "Rulers, generals, thinkers, and revolutionaries who shaped history.",
+    topics: [
+      "Julius Caesar",
+      "Alexander the Great",
+      "Augustus",
+      "Cleopatra",
+      "Genghis Khan",
+      "Saladin",
+      "Joan of Arc",
+      "Napoleon Bonaparte",
+    ],
+  },
+};
 
 function Explore() {
-  return (
-    <main className="standard-page">
+  const [searchParams] = useSearchParams();
 
-      <nav className="inner-navbar">
+  const category = searchParams.get("category") || "ancient";
+
+  const collection = collections[category] || collections.ancient;
+
+  return (
+    <main className="explore-page">
+
+      <nav className="navbar">
 
         <Link to="/" className="logo">
           chronicle
@@ -19,104 +96,89 @@ function Explore() {
       </nav>
 
 
-      <section className="page-header reveal">
+      <section className="explore-page-header">
 
-        <p className="eyebrow">
-          DISCOVER
+        <p className="explore-page-eyebrow">
+          {collection.eyebrow}
         </p>
 
-        <h1>
-          Explore History
+        <h1 className="explore-page-title">
+          {collection.title}
         </h1>
 
-        <p>
-          Start anywhere. Discover the people, civilizations,
-          conflicts, and events that shaped the world.
+        <p className="explore-page-description">
+          {collection.description}
         </p>
 
       </section>
 
 
-      <section className="explore-list full-explore-list">
+      <section className="explore-topic-list">
 
-        <Link to="/search" className="explore-item reveal">
+        {collection.topics.map((topic, index) => (
 
-          <div className="explore-image ancient-image"></div>
+          <Link
+            key={topic}
+            to={`/search?q=${encodeURIComponent(topic)}`}
+            className="explore-topic"
+          >
 
-          <div className="explore-number">
-            01
-          </div>
+            <span className="explore-topic-number">
+              {String(index + 1).padStart(2, "0")}
+            </span>
 
-          <div className="explore-info">
-            <h3>Ancient World</h3>
-            <p>Rome · Greece · Egypt · Persia</p>
-          </div>
+            <span className="explore-topic-title">
+              {topic}
+            </span>
 
-          <div className="explore-arrow">
-            →
-          </div>
+            <span className="explore-topic-arrow">
+              →
+            </span>
 
-        </Link>
+          </Link>
 
+        ))}
 
-        <Link to="/search" className="explore-item reveal">
-
-          <div className="explore-image medieval-image"></div>
-
-          <div className="explore-number">
-            02
-          </div>
-
-          <div className="explore-info">
-            <h3>Medieval World</h3>
-            <p>Kingdoms · Empires · Crusades · Mongols</p>
-          </div>
-
-          <div className="explore-arrow">
-            →
-          </div>
-
-        </Link>
+      </section>
 
 
-        <Link to="/search" className="explore-item reveal">
+      <section className="explore-more">
 
-          <div className="explore-image wars-image"></div>
+        <p className="explore-more-eyebrow">
+          EXPLORE MORE
+        </p>
 
-          <div className="explore-number">
-            03
-          </div>
+        <div className="explore-category-list">
 
-          <div className="explore-info">
-            <h3>Wars & Battles</h3>
-            <p>Conflicts that changed the course of history</p>
-          </div>
+          <Link
+            to="/explore?category=ancient"
+            className="explore-category-link"
+          >
+            Ancient World
+          </Link>
 
-          <div className="explore-arrow">
-            →
-          </div>
+          <Link
+            to="/explore?category=medieval"
+            className="explore-category-link"
+          >
+            Medieval World
+          </Link>
 
-        </Link>
+          <Link
+            to="/explore?category=wars"
+            className="explore-category-link"
+          >
+            Wars & Battles
+          </Link>
 
+          <Link
+            to="/explore?category=people"
+            className="explore-category-link"
+          >
+            People & Leaders
+          </Link>
 
-        <Link to="/search" className="explore-item reveal">
-
-          <div className="explore-image people-image"></div>
-
-          <div className="explore-number">
-            04
-          </div>
-
-          <div className="explore-info">
-            <h3>People & Leaders</h3>
-            <p>Rulers · Generals · Thinkers · Revolutionaries</p>
-          </div>
-
-          <div className="explore-arrow">
-            →
-          </div>
-
-        </Link>
+        </div>
 
       </section>
 
