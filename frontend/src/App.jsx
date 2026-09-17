@@ -5,6 +5,7 @@ import Search from "./pages/Search";
 import Explore from "./pages/Explore";
 import About from "./pages/About";
 import ScrollReveal from "./components/ScrollReveal";
+import PageTransition from "./components/PageTransition";
 
 import "./App.css";
 
@@ -14,12 +15,16 @@ function App() {
 
       <ScrollReveal />
 
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/search" element={<Search />} />
-        <Route path="/explore" element={<Explore />} />
-        <Route path="/about" element={<About />} />
-      </Routes>
+      <PageTransition>
+
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/search" element={<Search />} />
+          <Route path="/explore" element={<Explore />} />
+          <Route path="/about" element={<About />} />
+        </Routes>
+
+      </PageTransition>
 
     </BrowserRouter>
   );
