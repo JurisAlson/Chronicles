@@ -28,3 +28,4 @@ public class HistoryTopicValidator {
         return NON_HISTORY_TERMS.matcher(normalized).find();
     }
 }
+  
