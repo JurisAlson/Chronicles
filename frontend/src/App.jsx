@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import ChronicleAssistant from "./components/ChronicleAssistant";
 
 import Home from "./pages/Home";
 import Search from "./pages/Search";
@@ -6,6 +7,7 @@ import Explore from "./pages/Explore";
 import About from "./pages/About";
 import ScrollReveal from "./components/ScrollReveal";
 import PageTransition from "./components/PageTransition";
+import ChronicleAssistant from "./components/ChronicleAssistant";
 
 import "./App.css";
 
